@@ -1,3 +1,3 @@
 export const CONFIG = {
-  URL: 'http://localhost:1337/graphql',
+  URL: 'https://to-do-list-api-nf.herokuapp.com/graphql',
 };
