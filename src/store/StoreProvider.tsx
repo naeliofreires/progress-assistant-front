@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -33,6 +34,16 @@ export const StoreProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
+    setTimeout(async () => {
+      /**
+       * @Info
+       * - this function will be dispatched every time that store suffer a change
+       */
+      await StorageUtil.setStorage(JSON.stringify(store));
+    }, 1500);
+  }, [store]);
+
+  useEffect(() => {
     (async () => {
       const storage = await StorageUtil.getStorage();
 
@@ -50,6 +61,18 @@ export const StoreProvider: React.FC = ({ children }) => {
       }
     })();
   }, []); // eslint-disable-line
+
+  const reload = useCallback(async () => {
+    const pagination = { page: 1, pageSize: 5 };
+    const tasks = await getAll(pagination);
+
+    setStore(
+      produce((draftStore) => {
+        draftStore.tasks = tasks;
+        draftStore.pagination = pagination;
+      })
+    );
+  }, []);
 
   async function add(item: TaskInput): Promise<void> {
     try {
@@ -136,21 +159,18 @@ export const StoreProvider: React.FC = ({ children }) => {
     );
   }
 
-  useEffect(() => {
-    setTimeout(async () => {
-      /**
-       * @Info
-       * - this function will be dispatched every time that store suffer a change
-       */
-      await StorageUtil.setStorage(JSON.stringify(store));
-    }, 1500);
-  }, [store]);
-
   const value = useMemo(
     () =>
       ({
         ...store,
-        actions: { add, remove, update, loadPreviousPage, loadNextPage },
+        actions: {
+          add,
+          remove,
+          update,
+          reload,
+          loadPreviousPage,
+          loadNextPage,
+        },
       } as StoreProviderType),
     [store] // eslint-disable-line
   );

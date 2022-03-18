@@ -5,6 +5,7 @@ export type StoreProviderType = {
   tasks: TaskType[];
   pagination: Omit<PaginationArg, 'limit' | 'start'>;
   actions: {
+    reload(): Promise<void>;
     loadNextPage(): Promise<void>;
     loadPreviousPage(): Promise<void>;
     add(task: TaskInput): Promise<void>;
