@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { ToastContainer } from 'react-toastify';
+import { StoreProvider } from '/src/store/StoreProvider';
 
 import { App } from '/src';
 import styles from '../styles/Home.module.css';
@@ -15,7 +16,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <App />
+      <StoreProvider>
+        <App />
+      </StoreProvider>
 
       <ToastContainer />
     </div>

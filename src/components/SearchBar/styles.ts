@@ -8,6 +8,20 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column-reverse;
 
+  .selected {
+    color: white;
+    background-color: #557b83;
+    text-transform: uppercase;
+    border: 1px solid #ffffff;
+  }
+
+  .unselected {
+    color: #557b83;
+    background-color: white;
+    text-transform: uppercase;
+    border: 1px solid #557b83;
+  }
+
   div.actions-view {
     display: flex;
     align-items: center;
@@ -18,12 +32,7 @@ export const Container = styled.div`
     min-width: 45px;
     margin: 0 8px;
     padding: 3px 12px;
-    border: 1px solid #557b83;
     border-radius: 5px;
-
-    color: #557b83;
-    background-color: white;
-    text-transform: uppercase;
 
     &:nth-child(1) {
       margin-left: 0;

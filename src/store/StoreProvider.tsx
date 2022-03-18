@@ -11,6 +11,7 @@ import { ToastUtil } from '/src/utils/toast';
 import { StorageUtil } from '/src/utils/storage';
 import { TaskType } from '/src/components/Task/types';
 import { TaskInput } from '/src/graphql/services/types';
+import { STATUS } from '/src/components/SearchBar/types';
 import { deleteOne, getAll, save, updateOne } from '/src/graphql/services';
 
 import { StoreProviderType } from './types';
@@ -21,27 +22,31 @@ export const useStore = () => useContext(StoreContext);
 
 export const StoreProvider: React.FC = ({ children }) => {
   const [store, setStore] = useState<StoreProviderType>({
-    pagination: {
-      page: 1,
-      pageSize: 5,
-    },
+    pagination: { page: 1, pageSize: 5 },
+    filter: { title: '', status: STATUS.ALL },
     tasks: [] as TaskType[],
   } as StoreProviderType);
 
   const load = async () => {
-    const tasks = await getAll(store.pagination);
+    let tasks = await getAll(store.pagination);
+
+    switch (store.filter.status) {
+      case STATUS.DONE:
+        tasks = tasks.filter((task) => task.attributes.completed);
+        break;
+      case STATUS.IN_PROGRESS:
+        tasks = tasks.filter((task) => !task.attributes.completed);
+        break;
+    }
+
+    if (store.filter.title) {
+      tasks = tasks.filter((item) =>
+        item.attributes.title.includes(store.filter.title)
+      );
+    }
+
     setStore((state) => ({ ...state, tasks }));
   };
-
-  useEffect(() => {
-    setTimeout(async () => {
-      /**
-       * @Info
-       * - this function will be dispatched every time that store suffer a change
-       */
-      await StorageUtil.setStorage(JSON.stringify(store));
-    }, 1500);
-  }, [store]);
 
   useEffect(() => {
     (async () => {
@@ -62,6 +67,12 @@ export const StoreProvider: React.FC = ({ children }) => {
     })();
   }, []); // eslint-disable-line
 
+  useEffect(() => {
+    (async () => {
+      await load();
+    })();
+  }, [store.filter]); // eslint-disable-line
+
   const reload = useCallback(async () => {
     const pagination = { page: 1, pageSize: 5 };
     const tasks = await getAll(pagination);
@@ -73,6 +84,18 @@ export const StoreProvider: React.FC = ({ children }) => {
       })
     );
   }, []);
+
+  const onSelectFilterStatus = useCallback(
+    (filter: { status: STATUS; title: string }) => {
+      setStore(
+        produce((draftStore) => {
+          draftStore.filter.title = filter.title;
+          draftStore.filter.status = filter.status;
+        })
+      );
+    },
+    []
+  );
 
   async function add(item: TaskInput): Promise<void> {
     try {
@@ -159,6 +182,16 @@ export const StoreProvider: React.FC = ({ children }) => {
     );
   }
 
+  useEffect(() => {
+    setTimeout(async () => {
+      /**
+       * @Info
+       * - this function will be dispatched every time that store suffer a change
+       */
+      await StorageUtil.setStorage(JSON.stringify(store));
+    }, 1500);
+  }, [store]);
+
   const value = useMemo(
     () =>
       ({
@@ -168,8 +201,9 @@ export const StoreProvider: React.FC = ({ children }) => {
           remove,
           update,
           reload,
-          loadPreviousPage,
           loadNextPage,
+          loadPreviousPage,
+          onSelectFilterStatus,
         },
       } as StoreProviderType),
     [store] // eslint-disable-line
