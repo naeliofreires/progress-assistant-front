@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { CompletedViewType } from './types';
 
 export const Container = styled.div`
   background: #ededed;
@@ -18,6 +17,12 @@ export const InnerContainerLeft = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  button {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+  }
 `;
 
 export const InnerContainerRight = styled.div`
@@ -39,14 +44,3 @@ export const ActionsView = styled.div`
   align-items: center;
   justify-content: space-around;
 `;
-
-export const CompletedView = styled.div(({ completed }: CompletedViewType) => ({
-  width: 25,
-  height: 25,
-  background: completed ? '#4bd723' : '#c7ccc6',
-  borderRadius: 20,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginRight: 16,
-}));

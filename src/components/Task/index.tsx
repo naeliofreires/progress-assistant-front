@@ -3,15 +3,16 @@ import * as S from './styles';
 import { format, parseISO } from 'date-fns';
 
 import { Props } from './types';
+import { Checked } from '../Check';
 
 export const Task = memo(({ attributes, onDelete, onToggleStatus }: Props) => {
   return (
     <S.Container>
       <S.InnerContainerLeft>
-        <S.CompletedView
-          onClick={onToggleStatus}
-          completed={attributes.completed}
-        />
+        <button onClick={onToggleStatus}>
+          <Checked checked={attributes.completed} />
+        </button>
+
         <span>{attributes.title.slice(0, 10)}</span>
       </S.InnerContainerLeft>
 
