@@ -6,11 +6,23 @@
 
 .innerContainer {
   height: 100%;
-  max-width: 60%;
+  min-width: 350px;
   margin: 20px auto;
   padding: 20px;
   background: #E5EBF1FF;
   border-radius: 20px;
+}
+
+@media (min-width: 450px) {
+  .innerContainer {
+    width: 100%;
+  }
+}
+
+@media (min-width: 600px) {
+  .innerContainer {
+    width: 60%;
+  }
 }
 
 .main {
