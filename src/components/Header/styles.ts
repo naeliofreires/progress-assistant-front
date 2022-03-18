@@ -12,24 +12,8 @@ export const Container = styled.div`
     justify-content: center;
   }
 
-  div.amount-task-view {
-    display: none;
-
-    padding: 8px;
-    border-radius: 8px;
-    background: #e5efc1;
-    span {
-      font-weight: bold;
-      margin-right: 8px;
-    }
-  }
-
   @media (min-width: 600px) {
     justify-content: space-between;
-
-    div.amount-task-view {
-      display: flex;
-    }
   }
 `;
 

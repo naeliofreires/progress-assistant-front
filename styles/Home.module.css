@@ -1,5 +1,5 @@
 .container {
-  width: 80vh;
+  min-width: 350px;
   margin: 0 auto;
   background: aliceblue;
 }
