@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import produce from 'immer';
 import { ToastUtil } from '/src/utils/toast';
 import { StorageUtil } from '/src/utils/storage';
 import { TaskType } from '/src/components/Task/types';
@@ -50,70 +51,90 @@ export const StoreProvider: React.FC = ({ children }) => {
     })();
   }, []); // eslint-disable-line
 
-  const add = async (item: TaskInput) => {
+  async function add(item: TaskInput): Promise<void> {
     try {
-      await save(item);
-      await load();
+      const createdTask = (await save(item)) as TaskType;
+
+      setStore(
+        produce((draftStore) => {
+          draftStore.tasks.push(createdTask);
+        })
+      );
+
       ToastUtil.success();
     } catch (e) {
       ToastUtil.handleErrorEvent(e as string | string[]);
     }
-  };
+  }
 
-  const remove = async (id: number) => {
+  async function remove(id: number): Promise<void> {
     try {
       await deleteOne(id);
-      await load();
+
+      setStore(
+        produce((draftStore) => {
+          draftStore.tasks = draftStore.tasks.filter((item) => item.id !== id);
+        })
+      );
+
       ToastUtil.success('deleted!');
     } catch (e) {
       ToastUtil.handleErrorEvent(e as string | string[]);
     }
-  };
+  }
 
-  const update = async (data: TaskType) => {
+  async function update(data: TaskType): Promise<void> {
     try {
       const updatedTask = await updateOne(data);
 
       if (updatedTask) {
-        setStore((prevState: StoreProviderType) => ({
-          ...prevState,
-          tasks: prevState.tasks.map((item) => {
-            if (item.id === data.id) {
-              return updatedTask;
-            }
+        setStore(
+          produce((draftStore) => {
+            draftStore.tasks = draftStore.tasks.map((item) => {
+              if (item.id === data.id) {
+                return updatedTask;
+              }
 
-            return item;
-          }),
-        }));
+              return item;
+            });
+          })
+        );
       }
 
       ToastUtil.success('updated!');
     } catch (e) {
       ToastUtil.handleErrorEvent(e as string | string[]);
     }
-  };
+  }
 
-  const loadPreviousPage = async () => {
+  async function loadPreviousPage(): Promise<void> {
     const page = Number(store.pagination.page - 1);
 
     if (page === 0) return;
 
     const pagination = { ...store.pagination, page };
     const tasks = await getAll(pagination);
-    setStore((state) => ({
-      ...state,
-      tasks,
-      pagination,
-    }));
-  };
 
-  const loadNextPage = async () => {
+    setStore(
+      produce((draftStore) => {
+        draftStore.tasks = tasks;
+        draftStore.pagination = pagination;
+      })
+    );
+  }
+
+  async function loadNextPage(): Promise<void> {
     const page = Number(store.pagination.page + 1);
     const pagination = { ...store.pagination, page };
 
     const tasks = await getAll(pagination);
-    setStore((state) => ({ ...state, tasks, pagination }));
-  };
+    setStore(
+      produce((draftStore) => {
+        draftStore.tasks = tasks;
+        draftStore.pagination = pagination;
+      })
+    );
+  }
 
   useEffect(() => {
     setTimeout(async () => {
