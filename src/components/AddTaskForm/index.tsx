@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import { useStore } from '/src/store/StoreProvider';
 import { TaskInput } from '/src/graphql/services/types';
-import { NewTaskFormRef } from '/src/components/NewTaskForm/types';
+import { NewTaskFormRef } from '/src/components/AddTaskForm/types';
 
 import * as S from './styles';
 

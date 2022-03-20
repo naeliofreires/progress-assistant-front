@@ -2,36 +2,33 @@ import { memo } from 'react';
 import { useStore } from '/src/store/StoreProvider';
 
 import * as S from './styles';
+import { Button } from '/src/components/Button';
 
 export const Pagination = memo(() => {
-  const store = useStore();
+  const { pagination, actions } = useStore();
 
   const loadPreviousPage = async () => {
-    await store.actions.loadPreviousPage();
+    await actions.loadPreviousPage();
   };
 
   const loadNextPage = async () => {
-    await store.actions.loadNextPage();
+    await actions.loadNextPage();
   };
 
   return (
     <S.Container>
       <div className="previous-page-button-view">
-        {store.pagination.page > 1 && (
-          <button onClick={loadPreviousPage}>
-            <span>previous</span>
-          </button>
+        {pagination.page > 1 && (
+          <Button title="previous" onClick={loadPreviousPage} />
         )}
       </div>
 
       <div className="current-page-value-view">
-        <span>{store.pagination.page}</span>
+        <span>{pagination.page}</span>
       </div>
 
       <div className="next-page-button-view">
-        <button onClick={loadNextPage}>
-          <span>next</span>
-        </button>
+        <Button title="next" onClick={loadNextPage} />
       </div>
     </S.Container>
   );

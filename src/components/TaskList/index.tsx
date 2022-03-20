@@ -3,6 +3,8 @@ import { Task } from '/src/components/Task';
 import { TaskType } from '/src/components/Task/types';
 import { Pagination } from '/src/components/Pagination';
 
+import * as S from './styles';
+
 export const TaskList = () => {
   const store = useStore();
 
@@ -22,16 +24,18 @@ export const TaskList = () => {
 
   return (
     <>
-      <Pagination />
+      <S.ListView>
+        {store.tasks?.map((task) => (
+          <Task
+            key={task.id}
+            attributes={{ ...task.attributes }}
+            onToggleStatus={() => onToggleStatus(task)}
+            onDelete={() => onDeleteTask(task.id ?? 0)}
+          />
+        ))}
+      </S.ListView>
 
-      {store.tasks?.map((task) => (
-        <Task
-          key={task.id}
-          attributes={{ ...task.attributes }}
-          onToggleStatus={() => onToggleStatus(task)}
-          onDelete={() => onDeleteTask(task.id ?? 0)}
-        />
-      ))}
+      <Pagination />
     </>
   );
 };

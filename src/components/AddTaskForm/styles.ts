@@ -3,10 +3,16 @@ import styled from 'styled-components';
 export const Container = styled.div`
   top: 0;
   bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   height: 100%;
   position: absolute;
-  background: rgba(126, 126, 126, 0.24);
+
+  background: rgba(190, 190, 190, 0.37);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   form,
   input,
@@ -16,17 +22,21 @@ export const Container = styled.div`
   }
 
   > div.inner-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
     width: 350px;
     padding: 16px;
     border-radius: 18px;
     background: whitesmoke;
     border: 1px solid #a2d5ab;
-  }
+    box-shadow: 8px 8px 0 rgba(203, 203, 203, 0.48);
 
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
+    top: -180px;
+    position: relative;
+  }
 
   form {
     display: flex;

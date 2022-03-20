@@ -5,13 +5,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import search from '/public/search.svg';
+import { Button } from '/src/components/Button';
 import { useStore } from '/src/store/StoreProvider';
 import { PlusButton } from '/src/components/PlusButton';
-import { NewTaskForm, useNewTaskFormModal } from '/src/components/NewTaskForm';
+import { NewTaskForm, useNewTaskFormModal } from '/src/components/AddTaskForm';
 
 import * as S from './styles';
 import { Props, STATUS } from './types';
-import search from '/public/search.svg';
 
 export const SearchBar = ({ onSearch, onSelect }: Props) => {
   const ref = useNewTaskFormModal();
@@ -32,30 +33,23 @@ export const SearchBar = ({ onSearch, onSelect }: Props) => {
     <>
       <S.Container id="search-bar-container">
         <div className="actions-view">
-          <button
+          <Button
+            title="all"
             onClick={() => onSelect(STATUS.ALL)}
-            className={STATUS.ALL === filter.status ? 'selected' : 'unselected'}
-          >
-            <span>all</span>
-          </button>
+            selected={STATUS.ALL === filter.status}
+          />
 
-          <button
+          <Button
+            title="in progress"
+            selected={STATUS.IN_PROGRESS === filter.status}
             onClick={() => onSelect(STATUS.IN_PROGRESS)}
-            className={
-              STATUS.IN_PROGRESS === filter.status ? 'selected' : 'unselected'
-            }
-          >
-            <span>in progress</span>
-          </button>
+          />
 
-          <button
+          <Button
+            title="done"
+            selected={STATUS.DONE === filter.status}
             onClick={() => onSelect(STATUS.DONE)}
-            className={
-              STATUS.DONE === filter.status ? 'selected' : 'unselected'
-            }
-          >
-            <span>done</span>
-          </button>
+          />
         </div>
 
         <div className="search-view">

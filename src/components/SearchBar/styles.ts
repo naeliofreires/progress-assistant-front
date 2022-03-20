@@ -8,32 +8,21 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column-reverse;
 
-  .selected {
-    color: white;
-    background-color: #557b83;
-    text-transform: uppercase;
-    border: 1px solid #ffffff;
-  }
-
-  .unselected {
-    color: #557b83;
-    background-color: white;
-    text-transform: uppercase;
-    border: 1px solid #557b83;
-  }
-
   div.actions-view {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    button {
+      margin: 0 5px;
+    }
   }
 
   div.actions-view button {
-    min-width: 45px;
-    margin: 0 8px;
-    padding: 3px 12px;
-    border-radius: 5px;
-
     &:nth-child(1) {
       margin-left: 0;
     }
@@ -44,12 +33,12 @@ export const Container = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
+  }
 
-    div input {
-      border-radius: 5px;
-      padding: 4px 8px;
-      border: 1px solid #557b83;
-    }
+  div.search-view div input {
+    border-radius: 5px;
+    padding: 4px 8px;
+    border: 1px solid #557b83;
   }
 
   div.search-view div.search-input-view {

@@ -2,12 +2,13 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   width: 100%;
-  padding: 0 16px;
+  padding: 12px 0;
+  margin-top: 16px;
   margin-bottom: 8px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
 
   div.current-page-value-view,
   div.previous-page-button-view,
@@ -16,13 +17,5 @@ export const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  > button {
-    margin: 0 8px;
-    padding: 3px 8px;
-    background: transparent;
-    border-radius: 10px;
-    border: 1px solid #ccbcbc;
   }
 `;
