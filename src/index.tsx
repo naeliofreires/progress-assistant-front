@@ -1,10 +1,10 @@
-import { Header } from '/src/components/Header';
-import { TaskList } from '/src/components/TaskList';
-import { NewTaskForm } from '/src/components/NewTaskForm';
-import { useStore } from '/src/store/StoreProvider';
-import { SearchBar } from './components/SearchBar';
-import { STATUS } from '/src/components/SearchBar/types';
 import { useCallback } from 'react';
+
+import { Header } from '/src/components/Header';
+import { SearchBar } from './components/SearchBar';
+import { TaskList } from '/src/components/TaskList';
+import { useStore } from '/src/store/StoreProvider';
+import { STATUS } from '/src/components/SearchBar/types';
 
 export const App = () => {
   const { actions, filter } = useStore();
@@ -27,7 +27,6 @@ export const App = () => {
     <>
       <Header />
       <SearchBar onSelect={onSelectState} onSearch={onSearch} />
-      <NewTaskForm />
       <TaskList />
     </>
   );

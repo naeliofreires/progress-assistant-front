@@ -1,66 +1,86 @@
-import React, { ChangeEvent, useMemo, useRef, useState } from 'react';
-import search from '/public/search.svg';
-import task from '/public/task.svg';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useStore } from '/src/store/StoreProvider';
+import { PlusButton } from '/src/components/PlusButton';
+import { NewTaskForm, useNewTaskFormModal } from '/src/components/NewTaskForm';
 
 import * as S from './styles';
 import { Props, STATUS } from './types';
-import { useStore } from '/src/store/StoreProvider';
+import search from '/public/search.svg';
 
 export const SearchBar = ({ onSearch, onSelect }: Props) => {
+  const ref = useNewTaskFormModal();
+
   const { filter, tasks } = useStore();
-  const { status, title } = filter;
-  const [searchTitle, setSearchTitle] = useState(title || '');
   const amount = useMemo(() => tasks.length, [tasks]);
+  const [searchTitle, setSearchTitle] = useState(filter.title || '');
 
   const onChangeText = useRef((e: ChangeEvent<HTMLInputElement>) => {
     setSearchTitle(e.target.value);
   }).current;
 
+  const openModal = useCallback(() => {
+    ref.current?.open();
+  }, [ref]);
+
   return (
-    <S.Container id="search-bar-container">
-      <div className="actions-view">
-        <button
-          onClick={() => onSelect(STATUS.ALL)}
-          className={STATUS.ALL === status ? 'selected' : 'unselected'}
-        >
-          <span>all</span>
-        </button>
+    <>
+      <S.Container id="search-bar-container">
+        <div className="actions-view">
+          <button
+            onClick={() => onSelect(STATUS.ALL)}
+            className={STATUS.ALL === filter.status ? 'selected' : 'unselected'}
+          >
+            <span>all</span>
+          </button>
 
-        <button
-          onClick={() => onSelect(STATUS.IN_PROGRESS)}
-          className={STATUS.IN_PROGRESS === status ? 'selected' : 'unselected'}
-        >
-          <span>in progress</span>
-        </button>
+          <button
+            onClick={() => onSelect(STATUS.IN_PROGRESS)}
+            className={
+              STATUS.IN_PROGRESS === filter.status ? 'selected' : 'unselected'
+            }
+          >
+            <span>in progress</span>
+          </button>
 
-        <button
-          onClick={() => onSelect(STATUS.DONE)}
-          className={STATUS.DONE === status ? 'selected' : 'unselected'}
-        >
-          <span>done</span>
-        </button>
-      </div>
-
-      <div className="search-view">
-        <div className="search-input-view">
-          <input
-            type="text"
-            name="search"
-            id="search"
-            placeholder="title..."
-            value={searchTitle}
-            onChange={onChangeText}
-          />
-          <button onClick={() => onSearch(searchTitle)} className="transparent">
-            <S.Image src={search} width={25} height={25} />
+          <button
+            onClick={() => onSelect(STATUS.DONE)}
+            className={
+              STATUS.DONE === filter.status ? 'selected' : 'unselected'
+            }
+          >
+            <span>done</span>
           </button>
         </div>
 
-        <div className="amount-task-view">
-          <span>{amount}</span>
-          <S.Image src={task} width={25} height={25} />
+        <div className="search-view">
+          <div className="search-input-view">
+            <input
+              type="text"
+              name="search"
+              id="search"
+              placeholder="title..."
+              value={searchTitle}
+              onChange={onChangeText}
+            />
+            <button
+              className="transparent"
+              onClick={() => onSearch(searchTitle)}
+            >
+              <S.Image src={search} width={25} height={25} />
+            </button>
+          </div>
+
+          <PlusButton amount={amount} onClick={openModal} />
         </div>
-      </div>
-    </S.Container>
+      </S.Container>
+
+      <NewTaskForm ref={ref} />
+    </>
   );
 };
