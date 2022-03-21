@@ -69,7 +69,7 @@ export const Task = memo(({ attributes, onDelete, onToggleStatus }: Props) => {
       <Modal ref={modalRef}>
         <S.DeleteAlertContainer>
           <NextImage src={attention} width={45} height={45} />
-          <span>are you sure about delete this task?</span>
+          <span>are you sure about deleting this task?</span>
           <div className="actions-view">
             <button onClick={onDeleteConfirm} type="button" name="save">
               confirm

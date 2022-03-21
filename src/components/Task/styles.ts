@@ -82,7 +82,6 @@ export const ActionsView = styled.div`
 `;
 
 export const DeleteAlertContainer = styled.div`
-  top: -180px;
   position: relative;
   padding: 16px;
   background: white;

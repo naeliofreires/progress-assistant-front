@@ -7,14 +7,15 @@ import React, {
   useState,
 } from 'react';
 import produce from 'immer';
-import { ToastUtil } from '/src/utils/toast';
-import { StorageUtil } from '/src/utils/storage';
+import { ToastUtil } from '/src/utils/toastUtil';
+import { StorageUtil } from '/src/utils/storageUtil';
 import { TaskType } from '/src/components/Task/types';
 import { TaskInput } from '/src/graphql/services/types';
 import { STATUS } from '/src/components/SearchBar/types';
 import { deleteOne, getAll, save, updateOne } from '/src/graphql/services';
 
-import { StoreProviderType } from './types';
+import { ErrorTypeOverlap, PROMISE_STATUS, StoreProviderType } from './types';
+import { GraphQLError } from 'graphql-request/src/types';
 
 const StoreContext = createContext({} as StoreProviderType);
 
@@ -97,23 +98,26 @@ export const StoreProvider: React.FC = ({ children }) => {
     []
   );
 
-  async function add(item: TaskInput): Promise<void> {
+  async function add(data: TaskInput) {
     try {
-      const createdTask = (await save(item)) as TaskType;
+      const task = (await save(data)) as TaskType;
 
       setStore(
-        produce((draftStore) => {
-          draftStore.tasks.push(createdTask);
+        produce((draft) => {
+          draft.tasks.push(task);
         })
       );
 
-      ToastUtil.success();
-    } catch (e) {
-      ToastUtil.handleErrorEvent(e as string | string[]);
+      return { status: PROMISE_STATUS.SUCCESS };
+    } catch (error) {
+      return {
+        status: PROMISE_STATUS.FAILURE,
+        message: (error as ErrorTypeOverlap[])[0].message as string,
+      };
     }
   }
 
-  async function remove(id: number): Promise<void> {
+  async function remove(id: number) {
     try {
       await deleteOne(id);
 
@@ -125,11 +129,11 @@ export const StoreProvider: React.FC = ({ children }) => {
 
       ToastUtil.success('deleted!');
     } catch (e) {
-      ToastUtil.handleErrorEvent(e as string | string[]);
+      return { status: PROMISE_STATUS.FAILURE, message: e };
     }
   }
 
-  async function update(data: TaskType): Promise<void> {
+  async function update(data: TaskType) {
     try {
       const updatedTask = await updateOne(data);
 
@@ -149,7 +153,7 @@ export const StoreProvider: React.FC = ({ children }) => {
 
       ToastUtil.success('updated!');
     } catch (e) {
-      ToastUtil.handleErrorEvent(e as string | string[]);
+      return { status: PROMISE_STATUS.FAILURE, message: e };
     }
   }
 

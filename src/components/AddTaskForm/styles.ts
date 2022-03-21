@@ -15,14 +15,11 @@ export const Container = styled.div`
     justify-content: center;
 
     width: 350px;
-    padding: 16px;
+    padding: 16px 16px 8px;
     border-radius: 18px;
     background: whitesmoke;
     border: 1px solid #a2d5ab;
     box-shadow: 8px 8px 0 rgba(203, 203, 203, 0.48);
-
-    top: -180px;
-    position: relative;
   }
 
   form {
@@ -65,5 +62,12 @@ export const Container = styled.div`
   div.form-actions button[name='cancel'] {
     color: white;
     background-color: #557b83;
+  }
+
+  div.lottie-loading {
+    z-index: 1;
+    width: 100%;
+    height: 100px;
+    padding-top: 8px;
   }
 `;

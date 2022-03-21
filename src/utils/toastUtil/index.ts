@@ -1,9 +1,9 @@
 import { toast } from 'react-toastify';
 
-const error = (message = 'error') => {
+const _error = (message = 'error') => {
   toast.error(message, {
     position: 'top-right',
-    autoClose: 3000,
+    autoClose: 2500,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -12,10 +12,10 @@ const error = (message = 'error') => {
   });
 };
 
-const success = (message = 'success') => {
+const _success = (message = 'success') => {
   toast.success(message, {
     position: 'top-right',
-    autoClose: 3000,
+    autoClose: 2500,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -24,29 +24,20 @@ const success = (message = 'success') => {
   });
 };
 
-const info = (message = '') => {
+const _info = (message = '') => {
   toast.info(message, {
     position: 'top-right',
-    autoClose: 3000,
+    autoClose: 2500,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
   });
-};
-
-const handleErrorEvent = (e: string[] | string) => {
-  if (Array.isArray(e)) {
-    e.forEach((e) => error(e as string));
-  } else {
-    ToastUtil.error(e as string);
-  }
 };
 
 export const ToastUtil = {
-  info,
-  error,
-  success,
-  handleErrorEvent,
+  info: _info,
+  error: _error,
+  success: _success,
 };

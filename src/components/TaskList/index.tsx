@@ -1,5 +1,5 @@
-import { useStore } from '/src/store/StoreProvider';
 import { Task } from '/src/components/Task';
+import { useStore } from '/src/store/StoreProvider';
 import { TaskType } from '/src/components/Task/types';
 import { Pagination } from '/src/components/Pagination';
 
