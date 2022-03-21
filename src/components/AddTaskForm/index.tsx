@@ -1,29 +1,14 @@
-import React, {
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useStore } from '/src/store/StoreProvider';
 import { TaskInput } from '/src/graphql/services/types';
-import { NewTaskFormRef } from '/src/components/AddTaskForm/types';
 
 import * as S from './styles';
+import { Props } from './types';
 
-export const useNewTaskFormModal = () => useRef<NewTaskFormRef>(null);
-
-export const NewTaskForm = React.forwardRef<NewTaskFormRef>((props, ref) => {
+export const NewTaskForm = ({ onSubmitCallback, onCancelCallback }: Props) => {
   const store = useStore();
 
-  const [open, setOpen] = useState(false);
   const [task, setTask] = useState({} as TaskInput);
-
-  /**
-   * @Controllers
-   */
-  const _open = useRef(() => setOpen(true)).current;
-  const _close = useRef(() => setOpen(false)).current;
-  useImperativeHandle(ref, () => ({ open: _open, close: _close }));
 
   const setField = useRef((field: string, value: string | boolean) => {
     setTask((previousState: TaskInput) => ({
@@ -36,59 +21,61 @@ export const NewTaskForm = React.forwardRef<NewTaskFormRef>((props, ref) => {
     setField?.current(event.target.name, event.target.value);
   }, []);
 
+  const onCancel = useCallback(() => {
+    setTask({} as TaskInput);
+
+    onCancelCallback?.();
+  }, [onCancelCallback]);
+
   const onSubmit = useCallback(
     async (e) => {
       e.preventDefault();
       await store.actions.add(task);
       setTask({} as TaskInput);
 
-      _close();
+      onSubmitCallback?.();
     },
-    [_close, store.actions, task]
+    [onSubmitCallback, store.actions, task]
   );
 
   return (
-    <React.Fragment>
-      {open && (
-        <S.Container>
-          <div className="inner-container">
-            <form onSubmit={onSubmit}>
-              <input
-                value={task.title}
-                required
-                type="text"
-                name="title"
-                placeholder="title"
-                onChange={onChange}
-              />
-              <input
-                required
-                type="text"
-                value={task.description}
-                name="description"
-                placeholder="description"
-                onChange={onChange}
-              />
-              <input
-                required
-                type="date"
-                name="date"
-                value={task.date}
-                placeholder="date"
-                onChange={onChange}
-              />
-              <div className="form-actions">
-                <button className="save" type="submit" name="add">
-                  <span>add</span>
-                </button>
-                <button type="button" name="cancel" onClick={_close}>
-                  <span>cancel</span>
-                </button>
-              </div>
-            </form>
+    <S.Container>
+      <div className="inner-container">
+        <form onSubmit={onSubmit}>
+          <input
+            value={task.title}
+            required
+            type="text"
+            name="title"
+            placeholder="title"
+            onChange={onChange}
+          />
+          <input
+            required
+            type="text"
+            value={task.description}
+            name="description"
+            placeholder="description"
+            onChange={onChange}
+          />
+          <input
+            required
+            type="date"
+            name="date"
+            value={task.date}
+            placeholder="date"
+            onChange={onChange}
+          />
+          <div className="form-actions">
+            <button className="save" type="submit" name="add">
+              <span>add</span>
+            </button>
+            <button type="button" name="cancel" onClick={onCancel}>
+              <span>cancel</span>
+            </button>
           </div>
-        </S.Container>
-      )}
-    </React.Fragment>
+        </form>
+      </div>
+    </S.Container>
   );
-});
+};

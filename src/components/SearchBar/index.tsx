@@ -9,13 +9,14 @@ import search from '/public/search.svg';
 import { Button } from '/src/components/Button';
 import { useStore } from '/src/store/StoreProvider';
 import { PlusButton } from '/src/components/PlusButton';
-import { NewTaskForm, useNewTaskFormModal } from '/src/components/AddTaskForm';
+import { NewTaskForm } from '/src/components/AddTaskForm';
+import { Modal, useModalRef } from '/src/components/Modal';
 
 import * as S from './styles';
 import { Props, STATUS } from './types';
 
 export const SearchBar = ({ onSearch, onSelect }: Props) => {
-  const ref = useNewTaskFormModal();
+  const ref = useModalRef();
 
   const { filter, tasks } = useStore();
   const amount = useMemo(() => tasks.length, [tasks]);
@@ -27,6 +28,10 @@ export const SearchBar = ({ onSearch, onSelect }: Props) => {
 
   const openModal = useCallback(() => {
     ref.current?.open();
+  }, [ref]);
+
+  const closeModal = useCallback(() => {
+    ref.current?.close();
   }, [ref]);
 
   return (
@@ -74,7 +79,12 @@ export const SearchBar = ({ onSearch, onSelect }: Props) => {
         </div>
       </S.Container>
 
-      <NewTaskForm ref={ref} />
+      <Modal ref={ref}>
+        <NewTaskForm
+          onSubmitCallback={closeModal}
+          onCancelCallback={closeModal}
+        />
+      </Modal>
     </>
   );
 };

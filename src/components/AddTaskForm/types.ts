@@ -1,4 +1,4 @@
-export type NewTaskFormRef = {
-  open(): void;
-  close(): void;
+export type Props = {
+  onSubmitCallback?(): void;
+  onCancelCallback?(): void;
 };
