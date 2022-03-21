@@ -1,19 +1,20 @@
 import { memo } from 'react';
-import * as S from './styles';
 import { format, parseISO } from 'date-fns';
+import task from '/public/task.svg';
+import NextImage from 'next/image';
 
 import { Props } from './types';
-import { Checked } from '../Check';
+import * as S from './styles';
 
 export const Task = memo(({ attributes, onDelete, onToggleStatus }: Props) => {
   return (
     <S.Container>
       <S.InnerContainerLeft>
-        <button onClick={onToggleStatus}>
-          <Checked checked={attributes.completed} />
-        </button>
+        <S.IconView>
+          <NextImage src={task} width={45} height={45} />
+        </S.IconView>
 
-        <span>{attributes.title.slice(0, 10)}</span>
+        <span className="title">{attributes.title}</span>
       </S.InnerContainerLeft>
 
       <S.InnerContainerRight>
