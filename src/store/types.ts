@@ -26,7 +26,7 @@ export type StoreProviderType = {
     loadPreviousPage(): Promise<void>;
     add(task: TaskInput): Promise<PromiseResult>;
     update(task: TaskType): Promise<void>;
-    remove(id: number | string): Promise<void>;
+    remove(id: number | string): Promise<PromiseResult>;
     onSelectFilterStatus(value: { status: STATUS; title: string }): void;
   };
 };

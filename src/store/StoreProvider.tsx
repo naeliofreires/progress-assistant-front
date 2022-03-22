@@ -3,11 +3,9 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 import produce from 'immer';
-import { ToastUtil } from '/src/utils/toastUtil';
 import { StorageUtil } from '/src/utils/storageUtil';
 import { TaskType } from '/src/components/Task/types';
 import { TaskInput } from '/src/graphql/services/types';
@@ -15,7 +13,7 @@ import { STATUS } from '/src/components/SearchBar/types';
 import { deleteOne, getAll, save, updateOne } from '/src/graphql/services';
 
 import { ErrorTypeOverlap, PROMISE_STATUS, StoreProviderType } from './types';
-import { GraphQLError } from 'graphql-request/src/types';
+import { TaskUtil } from '/src/utils/taskUtil';
 
 const StoreContext = createContext({} as StoreProviderType);
 
@@ -29,24 +27,15 @@ export const StoreProvider: React.FC = ({ children }) => {
   } as StoreProviderType);
 
   const load = async () => {
-    let tasks = await getAll(store.pagination);
+    const response = await getAll();
 
-    switch (store.filter.status) {
-      case STATUS.DONE:
-        tasks = tasks.filter((task) => task.attributes.completed);
-        break;
-      case STATUS.IN_PROGRESS:
-        tasks = tasks.filter((task) => !task.attributes.completed);
-        break;
-    }
+    const tasks = TaskUtil.applyFilterOptions(response, store.filter);
 
-    if (store.filter.title) {
-      tasks = tasks.filter((item) =>
-        item.attributes.title.includes(store.filter.title)
-      );
-    }
-
-    setStore((state) => ({ ...state, tasks }));
+    setStore(
+      produce((draft) => {
+        draft.tasks = tasks;
+      })
+    );
   };
 
   useEffect(() => {
@@ -100,13 +89,9 @@ export const StoreProvider: React.FC = ({ children }) => {
 
   async function add(data: TaskInput) {
     try {
-      const task = (await save(data)) as TaskType;
+      await save(data);
 
-      setStore(
-        produce((draft) => {
-          draft.tasks.push(task);
-        })
-      );
+      await load();
 
       return { status: PROMISE_STATUS.SUCCESS };
     } catch (error) {
@@ -121,13 +106,9 @@ export const StoreProvider: React.FC = ({ children }) => {
     try {
       await deleteOne(id);
 
-      setStore(
-        produce((draftStore) => {
-          draftStore.tasks = draftStore.tasks.filter((item) => item.id !== id);
-        })
-      );
+      await load();
 
-      ToastUtil.success('deleted!');
+      return { status: PROMISE_STATUS.SUCCESS };
     } catch (e) {
       return { status: PROMISE_STATUS.FAILURE, message: e };
     }
@@ -135,56 +116,51 @@ export const StoreProvider: React.FC = ({ children }) => {
 
   async function update(data: TaskType) {
     try {
-      const updatedTask = await updateOne(data);
+      await updateOne(data);
 
-      if (updatedTask) {
-        setStore(
-          produce((draftStore) => {
-            draftStore.tasks = draftStore.tasks.map((item) => {
-              if (item.id === data.id) {
-                return updatedTask;
-              }
+      await load();
 
-              return item;
-            });
-          })
-        );
-      }
-
-      ToastUtil.success('updated!');
+      return { status: PROMISE_STATUS.SUCCESS };
     } catch (e) {
       return { status: PROMISE_STATUS.FAILURE, message: e };
     }
   }
 
-  async function loadPreviousPage(): Promise<void> {
-    const page = Number(store.pagination.page - 1);
+  useEffect(() => {
+    (async () => {
+      const response = await getAll(store.pagination);
+      const tasks = TaskUtil.applyFilterOptions(response, store.filter);
+      setStore((previous) => ({ ...previous, tasks }));
+    })();
+  }, [store.filter, store.pagination]);
 
-    if (page === 0) return;
+  const loadPreviousPage = async () => {
+    setStore((previous) => {
+      const { pagination } = previous;
 
-    const pagination = { ...store.pagination, page };
-    const tasks = await getAll(pagination);
+      return {
+        ...previous,
+        pagination: {
+          ...pagination,
+          page: pagination.page - 1,
+        },
+      };
+    });
+  };
 
-    setStore(
-      produce((draftStore) => {
-        draftStore.tasks = tasks;
-        draftStore.pagination = pagination;
-      })
-    );
-  }
+  const loadNextPage = async () => {
+    setStore((previous) => {
+      const { pagination } = previous;
 
-  async function loadNextPage(): Promise<void> {
-    const page = Number(store.pagination.page + 1);
-    const pagination = { ...store.pagination, page };
-
-    const tasks = await getAll(pagination);
-    setStore(
-      produce((draftStore) => {
-        draftStore.tasks = tasks;
-        draftStore.pagination = pagination;
-      })
-    );
-  }
+      return {
+        ...previous,
+        pagination: {
+          ...pagination,
+          page: pagination.page + 1,
+        },
+      };
+    });
+  };
 
   useEffect(() => {
     setTimeout(async () => {
@@ -196,22 +172,19 @@ export const StoreProvider: React.FC = ({ children }) => {
     }, 1500);
   }, [store]);
 
-  const value = useMemo(
-    () =>
-      ({
-        ...store,
-        actions: {
-          add,
-          remove,
-          update,
-          reload,
-          loadNextPage,
-          loadPreviousPage,
-          onSelectFilterStatus,
-        },
-      } as StoreProviderType),
-    [store] // eslint-disable-line
-  );
+  const value = {
+    ...store,
+    actions: {
+      add,
+      load,
+      remove,
+      update,
+      reload,
+      onSelectFilterStatus,
+      loadNextPage,
+      loadPreviousPage,
+    },
+  } as unknown as StoreProviderType;
 
   return (
     <StoreContext.Provider value={value}>{children}</StoreContext.Provider>

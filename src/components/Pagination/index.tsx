@@ -1,10 +1,9 @@
-import { memo } from 'react';
 import { useStore } from '/src/store/StoreProvider';
 
 import * as S from './styles';
 import { Button } from '/src/components/Button';
 
-export const Pagination = memo(() => {
+export const Pagination = () => {
   const { pagination, actions } = useStore();
 
   const loadPreviousPage = async () => {
@@ -32,4 +31,4 @@ export const Pagination = memo(() => {
       </div>
     </S.Container>
   );
-});
+};
