@@ -8,7 +8,7 @@ export const Header = () => {
     <S.Container>
       <div>
         <S.NextImage src={logo} width={100} height={100} />
-        <h1> Progress Escort </h1>
+        <h1> Progress Assistant </h1>
       </div>
     </S.Container>
   );
