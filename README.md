@@ -32,3 +32,4 @@ Storage
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## [Screenshots](https://github.com/naeliofreires/todo-front/tree/main/prints)
