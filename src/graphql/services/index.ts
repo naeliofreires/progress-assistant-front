@@ -16,8 +16,8 @@ export async function getAll(
       } = await request(
         URL,
         gql`
-          query ($pagination: PaginationArg) {
-            tasks(pagination: $pagination) {
+          query ($pagination: PaginationArg, $sort: [String]) {
+            tasks(pagination: $pagination, sort: $sort) {
               data {
                 id
                 attributes {
@@ -30,7 +30,7 @@ export async function getAll(
             }
           }
         `,
-        { pagination }
+        { pagination, sort: ['date'] }
       );
 
       resolve(data);

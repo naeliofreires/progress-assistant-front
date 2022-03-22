@@ -3,17 +3,17 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 import produce from 'immer';
-import { ToastUtil } from '/src/utils/toast';
-import { StorageUtil } from '/src/utils/storage';
+import { StorageUtil } from '/src/utils/storageUtil';
 import { TaskType } from '/src/components/Task/types';
 import { TaskInput } from '/src/graphql/services/types';
+import { STATUS } from '/src/components/SearchBar/types';
 import { deleteOne, getAll, save, updateOne } from '/src/graphql/services';
 
-import { StoreProviderType } from './types';
+import { ErrorTypeOverlap, PROMISE_STATUS, StoreProviderType } from './types';
+import { TaskUtil } from '/src/utils/taskUtil';
 
 const StoreContext = createContext({} as StoreProviderType);
 
@@ -21,27 +21,22 @@ export const useStore = () => useContext(StoreContext);
 
 export const StoreProvider: React.FC = ({ children }) => {
   const [store, setStore] = useState<StoreProviderType>({
-    pagination: {
-      page: 1,
-      pageSize: 5,
-    },
+    pagination: { page: 1, pageSize: 5 },
+    filter: { title: '', status: STATUS.ALL },
     tasks: [] as TaskType[],
   } as StoreProviderType);
 
   const load = async () => {
-    const tasks = await getAll(store.pagination);
-    setStore((state) => ({ ...state, tasks }));
-  };
+    const response = await getAll();
 
-  useEffect(() => {
-    setTimeout(async () => {
-      /**
-       * @Info
-       * - this function will be dispatched every time that store suffer a change
-       */
-      await StorageUtil.setStorage(JSON.stringify(store));
-    }, 1500);
-  }, [store]);
+    const tasks = TaskUtil.applyFilterOptions(response, store.filter);
+
+    setStore(
+      produce((draft) => {
+        draft.tasks = tasks;
+      })
+    );
+  };
 
   useEffect(() => {
     (async () => {
@@ -62,6 +57,12 @@ export const StoreProvider: React.FC = ({ children }) => {
     })();
   }, []); // eslint-disable-line
 
+  useEffect(() => {
+    (async () => {
+      await load();
+    })();
+  }, [store.filter]); // eslint-disable-line
+
   const reload = useCallback(async () => {
     const pagination = { page: 1, pageSize: 5 };
     const tasks = await getAll(pagination);
@@ -74,106 +75,119 @@ export const StoreProvider: React.FC = ({ children }) => {
     );
   }, []);
 
-  async function add(item: TaskInput): Promise<void> {
-    try {
-      const createdTask = (await save(item)) as TaskType;
-
+  const onSelectFilterStatus = useCallback(
+    (filter: { status: STATUS; title: string }) => {
       setStore(
         produce((draftStore) => {
-          draftStore.tasks.push(createdTask);
+          draftStore.filter.title = filter.title;
+          draftStore.filter.status = filter.status;
         })
       );
+    },
+    []
+  );
 
-      ToastUtil.success();
-    } catch (e) {
-      ToastUtil.handleErrorEvent(e as string | string[]);
+  async function add(data: TaskInput) {
+    try {
+      await save(data);
+
+      await load();
+
+      return { status: PROMISE_STATUS.SUCCESS };
+    } catch (error) {
+      return {
+        status: PROMISE_STATUS.FAILURE,
+        message: (error as ErrorTypeOverlap[])[0].message as string,
+      };
     }
   }
 
-  async function remove(id: number): Promise<void> {
+  async function remove(id: number) {
     try {
       await deleteOne(id);
 
-      setStore(
-        produce((draftStore) => {
-          draftStore.tasks = draftStore.tasks.filter((item) => item.id !== id);
-        })
-      );
+      await load();
 
-      ToastUtil.success('deleted!');
+      return { status: PROMISE_STATUS.SUCCESS };
     } catch (e) {
-      ToastUtil.handleErrorEvent(e as string | string[]);
+      return { status: PROMISE_STATUS.FAILURE, message: e };
     }
   }
 
-  async function update(data: TaskType): Promise<void> {
+  async function update(data: TaskType) {
     try {
-      const updatedTask = await updateOne(data);
+      await updateOne(data);
 
-      if (updatedTask) {
-        setStore(
-          produce((draftStore) => {
-            draftStore.tasks = draftStore.tasks.map((item) => {
-              if (item.id === data.id) {
-                return updatedTask;
-              }
+      await load();
 
-              return item;
-            });
-          })
-        );
-      }
-
-      ToastUtil.success('updated!');
+      return { status: PROMISE_STATUS.SUCCESS };
     } catch (e) {
-      ToastUtil.handleErrorEvent(e as string | string[]);
+      return { status: PROMISE_STATUS.FAILURE, message: e };
     }
   }
 
-  async function loadPreviousPage(): Promise<void> {
-    const page = Number(store.pagination.page - 1);
+  useEffect(() => {
+    getAll(store.pagination).then((response) => {
+      setStore((previous) => ({
+        ...previous,
+        tasks: TaskUtil.applyFilterOptions(response, store.filter),
+      }));
+    });
+  }, [store.filter, store.pagination]);
 
-    if (page === 0) return;
+  const loadPreviousPage = async () => {
+    setStore((previous) => {
+      const { pagination } = previous;
 
-    const pagination = { ...store.pagination, page };
-    const tasks = await getAll(pagination);
-
-    setStore(
-      produce((draftStore) => {
-        draftStore.tasks = tasks;
-        draftStore.pagination = pagination;
-      })
-    );
-  }
-
-  async function loadNextPage(): Promise<void> {
-    const page = Number(store.pagination.page + 1);
-    const pagination = { ...store.pagination, page };
-
-    const tasks = await getAll(pagination);
-    setStore(
-      produce((draftStore) => {
-        draftStore.tasks = tasks;
-        draftStore.pagination = pagination;
-      })
-    );
-  }
-
-  const value = useMemo(
-    () =>
-      ({
-        ...store,
-        actions: {
-          add,
-          remove,
-          update,
-          reload,
-          loadPreviousPage,
-          loadNextPage,
+      return {
+        ...previous,
+        pagination: {
+          ...pagination,
+          page: pagination.page - 1,
         },
-      } as StoreProviderType),
-    [store] // eslint-disable-line
-  );
+      };
+    });
+  };
+
+  const loadNextPage = async () => {
+    setStore((previous) => {
+      const { pagination } = previous;
+
+      const increment = previous.tasks.length ? 1 : 0;
+
+      return {
+        ...previous,
+        pagination: {
+          ...pagination,
+          page: pagination.page + increment,
+        },
+      };
+    });
+  };
+
+  useEffect(() => {
+    setTimeout(async () => {
+      /**
+       * @Info
+       * - this function will be dispatched every time that store suffer a change
+       */
+      await StorageUtil.setStorage(JSON.stringify(store));
+    }, 1500);
+  }, [store]);
+
+  const value = {
+    ...store,
+    actions: {
+      add,
+      load,
+      remove,
+      update,
+      reload,
+      onSelectFilterStatus,
+      loadNextPage,
+      loadPreviousPage,
+    },
+  } as unknown as StoreProviderType;
 
   return (
     <StoreContext.Provider value={value}>{children}</StoreContext.Provider>

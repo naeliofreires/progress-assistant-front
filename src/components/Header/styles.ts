@@ -1,23 +1,20 @@
 import styled from 'styled-components';
+import Image from 'next/image';
 
 export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
 
-  button {
+  div {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
 
-    margin-left: 16px;
-    border: 1px solid white;
-    border-radius: 10px;
-    background: #ededed;
-
-    svg {
-      width: 25px;
-      height: 25px;
-    }
+  @media (min-width: 600px) {
+    justify-content: space-between;
   }
 `;
+
+export const NextImage = styled(Image)``;
