@@ -35,9 +35,11 @@ export const Container = styled.div`
     align-items: center;
   }
 
-  div.search-view div input {
+  div.search-view div.search-input-view {
+    height: 28px;
     border-radius: 5px;
-    padding: 4px 8px;
+    padding-left: 8px;
+    margin-left: 16px;
     border: 1px solid #557b83;
   }
 
@@ -52,7 +54,7 @@ export const Container = styled.div`
 
   div.search-view div.search-input-view input {
     width: 100%;
-    margin: 8px 0;
+    margin-right: 16px;
   }
 
   /**

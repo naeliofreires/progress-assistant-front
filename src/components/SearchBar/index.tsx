@@ -35,6 +35,10 @@ export const SearchBar = ({ onSearch, onSelect }: Props) => {
     ref.current?.close();
   }, [ref]);
 
+  const setFocus = useRef(() => {
+    document.getElementById('search')?.focus();
+  }).current;
+
   return (
     <>
       <S.Container id="search-bar-container">
@@ -60,7 +64,9 @@ export const SearchBar = ({ onSearch, onSelect }: Props) => {
 
         <div className="search-view">
           <div className="search-input-view">
+            <S.Image onClick={setFocus} src={search} width={20} height={20} />
             <input
+              className="transparent"
               type="text"
               name="search"
               id="search"
@@ -68,8 +74,6 @@ export const SearchBar = ({ onSearch, onSelect }: Props) => {
               value={searchTitle}
               onChange={onChangeText}
             />
-
-            <S.Image src={search} width={25} height={25} />
           </div>
 
           <PlusButton amount={amount} onClick={openModal} />
