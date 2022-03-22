@@ -1,4 +1,4 @@
-##  Progress Escort | Next JS Application
+##  Progress Assistant | Next JS Application
 
 This application was built using Next JS Framework.
 
