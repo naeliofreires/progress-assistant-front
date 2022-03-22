@@ -17,13 +17,14 @@ import { Props, STATUS } from './types';
 
 export const SearchBar = ({ onSearch, onSelect }: Props) => {
   const ref = useModalRef();
-
   const { filter, tasks } = useStore();
   const amount = useMemo(() => tasks.length, [tasks]);
   const [searchTitle, setSearchTitle] = useState(filter.title || '');
 
   const onChangeText = useRef((e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTitle(e.target.value);
+    const value = e.target.value;
+    setSearchTitle(value);
+    onSearch(value).then(null);
   }).current;
 
   const openModal = useCallback(() => {
@@ -67,12 +68,8 @@ export const SearchBar = ({ onSearch, onSelect }: Props) => {
               value={searchTitle}
               onChange={onChangeText}
             />
-            <button
-              className="transparent"
-              onClick={() => onSearch(searchTitle)}
-            >
-              <S.Image src={search} width={25} height={25} />
-            </button>
+
+            <S.Image src={search} width={25} height={25} />
           </div>
 
           <PlusButton amount={amount} onClick={openModal} />
