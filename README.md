@@ -20,7 +20,7 @@ Storage
 [GraphQL Request](https://github.com/prisma-labs/graphql-request)
 - to do requests for the API
 
-### How to run:
+### Run:
 
 ```shellscript 
   $ yarn install
