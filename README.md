@@ -12,7 +12,7 @@ ___
 - add styles around of our components
 
 [Context API](https://mobx.js.org/README.html)
-- to handle w/ the data around of the app using flux architecture
+- to handle w/ the data around of the app
 
 Storage
 - to keep the last actions from the user saved. (We used this to rehydrate the store)
