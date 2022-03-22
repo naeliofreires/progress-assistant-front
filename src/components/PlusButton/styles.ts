@@ -26,7 +26,6 @@ export const Container = styled.div`
     align-items: center;
     justify-content: center;
     border-radius: 8px;
-    padding: 4px 8px;
   }
 
   @media (min-width: 600px) {
