@@ -48,7 +48,12 @@ export const Task = memo(({ attributes, onDelete, onToggleStatus }: Props) => {
 
         <S.InnerContainerRight>
           <S.CalendarView>
-            <NextImage src={calendar} width={22} height={22} />
+            <NextImage
+              className={'teste'}
+              src={calendar}
+              width={22}
+              height={22}
+            />
             <span className="task-date">
               {format(parseISO(attributes.date), 'PPP')}
             </span>

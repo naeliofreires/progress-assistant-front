@@ -127,11 +127,12 @@ export const StoreProvider: React.FC = ({ children }) => {
   }
 
   useEffect(() => {
-    (async () => {
-      const response = await getAll(store.pagination);
-      const tasks = TaskUtil.applyFilterOptions(response, store.filter);
-      setStore((previous) => ({ ...previous, tasks }));
-    })();
+    getAll(store.pagination).then((response) => {
+      setStore((previous) => ({
+        ...previous,
+        tasks: TaskUtil.applyFilterOptions(response, store.filter),
+      }));
+    });
   }, [store.filter, store.pagination]);
 
   const loadPreviousPage = async () => {
@@ -152,11 +153,13 @@ export const StoreProvider: React.FC = ({ children }) => {
     setStore((previous) => {
       const { pagination } = previous;
 
+      const increment = previous.tasks.length ? 1 : 0;
+
       return {
         ...previous,
         pagination: {
           ...pagination,
-          page: pagination.page + 1,
+          page: pagination.page + increment,
         },
       };
     });

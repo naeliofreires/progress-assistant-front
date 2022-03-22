@@ -34,12 +34,18 @@ export const CheckIconView = styled.div<{ checked?: boolean }>`
 `;
 
 export const TaskIconView = styled.div`
+  display: none;
   width: 45px;
   height: 45px;
   margin-right: 8px;
+
+  @media (min-width: 550px) {
+    display: initial;
+  }
 `;
 
 export const CalendarView = styled.div`
+  width: 150px;
   display: flex;
   align-items: center;
 
@@ -48,6 +54,16 @@ export const CalendarView = styled.div`
     font-size: 12px;
     font-weight: 700;
     margin-left: 8px;
+  }
+
+  img {
+    display: none !important;
+  }
+
+  @media (min-width: 430px) {
+    img {
+      display: initial !important;
+    }
   }
 `;
 

@@ -1,17 +1,18 @@
+import { Button } from '/src/components/Button';
 import { useStore } from '/src/store/StoreProvider';
 
 import * as S from './styles';
-import { Button } from '/src/components/Button';
 
 export const Pagination = () => {
-  const { pagination, actions } = useStore();
+  const store = useStore();
+  const pagination = store.pagination;
 
   const loadPreviousPage = async () => {
-    await actions.loadPreviousPage();
+    await store.actions.loadPreviousPage();
   };
 
   const loadNextPage = async () => {
-    await actions.loadNextPage();
+    await store.actions.loadNextPage();
   };
 
   return (
