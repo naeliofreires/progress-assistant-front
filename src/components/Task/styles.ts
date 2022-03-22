@@ -99,7 +99,7 @@ export const ActionsView = styled.div`
 
 export const DeleteAlertContainer = styled.div`
   position: relative;
-  padding: 16px;
+  padding: 16px 8px;
   background: white;
   border-radius: 18px;
   display: flex;
@@ -110,7 +110,6 @@ export const DeleteAlertContainer = styled.div`
 
   span {
     width: 80%;
-    background: rgba(222, 221, 221, 0.58);
     text-align: center;
     margin: 16px auto 16px;
     display: block;
@@ -118,6 +117,7 @@ export const DeleteAlertContainer = styled.div`
     font-size: 18px;
     font-weight: bold;
     border-radius: 18px;
+    font-style: italic;
   }
 
   div.actions-view {
@@ -139,6 +139,7 @@ export const DeleteAlertContainer = styled.div`
     color: white;
     background: #d74c4c;
     text-transform: uppercase;
+    letter-spacing: 0.1rem;
   }
 
   div.actions-view button[name='save'] {

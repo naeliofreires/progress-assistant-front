@@ -68,6 +68,8 @@ export const NewTaskForm = ({ onSubmitCallback, onCancelCallback }: Props) => {
   return (
     <S.Container>
       <div className="inner-container">
+        <h2>Add New Task</h2>
+
         <form onSubmit={onSubmit}>
           <input
             value={task.title}

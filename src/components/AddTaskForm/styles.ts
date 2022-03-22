@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  z-index: 1;
   form,
   input,
   div.form-actions,
@@ -15,7 +16,7 @@ export const Container = styled.div`
     justify-content: center;
 
     width: 350px;
-    padding: 16px 16px 8px;
+    padding: 0 8px 16px;
     border-radius: 18px;
     background: whitesmoke;
     border: 1px solid #a2d5ab;
@@ -24,10 +25,9 @@ export const Container = styled.div`
 
   form {
     display: flex;
-    padding: 0 20px;
-    align-items: flex-start;
-    justify-content: center;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   form label {
