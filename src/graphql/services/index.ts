@@ -1,7 +1,7 @@
 import { RequestDocument, gql, request } from 'graphql-request';
 
-import { TaskType } from '/src/components/Task/types';
-import { CONFIG } from '/src/config';
+import { TaskType } from '../../components/Task/types';
+import { CONFIG } from '../../config';
 import { ErrorType, TaskInput } from './types';
 
 const { URL } = CONFIG;

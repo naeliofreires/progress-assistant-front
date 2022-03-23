@@ -1,22 +1,24 @@
-import React, { useCallback, useRef, useState } from 'react';
 import Lottie from 'react-lottie';
-import { useStore } from '/src/store/StoreProvider';
-import { TaskInput } from '/src/graphql/services/types';
-import loadingAnimationData from '/src/assets/animation/loading-dots.json';
-import successAnimationData from '/src/assets/animation/success.json';
+import React, { useCallback, useRef, useState } from 'react';
+
+import { ToastUtil } from '../../utils/toastUtil';
+import { PROMISE_STATUS } from '../../store/types';
+import { useStore } from '../../store/StoreProvider';
+import { TaskInput } from '../..//graphql/services/types';
+import { AnimationUtil } from '../..//utils/animationUtil';
+
+import successAnimationData from '../../assets/animation/success.json';
+import loadingAnimationData from '../../assets/animation/loading-dots.json';
 
 import * as S from './styles';
 import { Props } from './types';
-import { AnimationUtil } from '/src/utils/animationUtil';
-import { PROMISE_STATUS } from '/src/store/types';
-import { ToastUtil } from '/src/utils/toastUtil';
 
 const loadOptions =
   AnimationUtil.getDefaultAnimationOptions(loadingAnimationData);
 const successOptions =
   AnimationUtil.getDefaultAnimationOptions(successAnimationData);
 
-export const NewTaskForm = ({ onSubmitCallback, onCancelCallback }: Props) => {
+export const NewTask = ({ onSubmitCallback, onCancelCallback }: Props) => {
   const store = useStore();
   const [task, setTask] = useState({} as TaskInput);
   const [loading, setLoading] = useState(false);
@@ -42,7 +44,6 @@ export const NewTaskForm = ({ onSubmitCallback, onCancelCallback }: Props) => {
   const onSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      setLoading(true);
 
       const response = await store.actions.add(task);
 
@@ -50,16 +51,12 @@ export const NewTaskForm = ({ onSubmitCallback, onCancelCallback }: Props) => {
         setLoading(false);
         setSuccess(true);
 
-        setTimeout(() => {
-          onSubmitCallback?.();
-        }, 2000);
+        setTimeout(() => onSubmitCallback?.(response.status), 2000);
       }
 
       if (response.status === PROMISE_STATUS.FAILURE) {
         ToastUtil.error(response.message);
-        setTimeout(() => {
-          setLoading(false);
-        }, 2000);
+        setTimeout(() => setLoading(false), 2000);
       }
     },
     [onSubmitCallback, store.actions, task]
@@ -70,21 +67,23 @@ export const NewTaskForm = ({ onSubmitCallback, onCancelCallback }: Props) => {
       <div className="inner-container">
         <h2>Add New Task</h2>
 
-        <form onSubmit={onSubmit}>
+        <form name="new-task" onSubmit={onSubmit}>
           <input
             value={task.title}
-            required
             type="text"
+            required={true}
             name="title"
-            placeholder="title"
+            placeholder="Title"
             onChange={onChange}
           />
+
           <input
-            required
+            required={true}
             type="text"
+            minLength={10}
             value={task.description}
             name="description"
-            placeholder="description"
+            placeholder="Description"
             onChange={onChange}
           />
           <input
@@ -92,7 +91,7 @@ export const NewTaskForm = ({ onSubmitCallback, onCancelCallback }: Props) => {
             type="date"
             name="date"
             value={task.date}
-            placeholder="date"
+            placeholder="Date"
             onChange={onChange}
           />
           <div className="form-actions">

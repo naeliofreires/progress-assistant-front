@@ -5,6 +5,7 @@ import { STATUS } from '/src/components/SearchBar/types';
 export enum PROMISE_STATUS {
   SUCCESS = 'SUCCESS',
   FAILURE = 'FAILURE',
+  CANCELED = 'CANCELED',
 }
 
 export type PromiseResult = {

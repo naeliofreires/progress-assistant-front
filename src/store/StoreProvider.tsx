@@ -6,14 +6,14 @@ import React, {
   useState,
 } from 'react';
 import produce from 'immer';
-import { StorageUtil } from '/src/utils/storageUtil';
-import { TaskType } from '/src/components/Task/types';
-import { TaskInput } from '/src/graphql/services/types';
-import { STATUS } from '/src/components/SearchBar/types';
-import { deleteOne, getAll, save, updateOne } from '/src/graphql/services';
+import { TaskUtil } from '../utils/taskUtil';
+import { StorageUtil } from '../utils/storageUtil';
+import { TaskType } from '../components/Task/types';
+import { TaskInput } from '../graphql/services/types';
+import { STATUS } from '../components/SearchBar/types';
+import { deleteOne, getAll, save, updateOne } from '../graphql/services';
 
 import { ErrorTypeOverlap, PROMISE_STATUS, StoreProviderType } from './types';
-import { TaskUtil } from '/src/utils/taskUtil';
 
 const StoreContext = createContext({} as StoreProviderType);
 

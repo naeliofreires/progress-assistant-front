@@ -9,8 +9,8 @@ import search from '/public/search.svg';
 import { Button } from '/src/components/Button';
 import { useStore } from '/src/store/StoreProvider';
 import { PlusButton } from '/src/components/PlusButton';
-import { NewTaskForm } from '/src/components/AddTaskForm';
 import { Modal, useModalRef } from '/src/components/Modal';
+import { NewTask } from '/src/components/NewTask';
 
 import * as S from './styles';
 import { Props, STATUS } from './types';
@@ -81,10 +81,7 @@ export const SearchBar = ({ onSearch, onSelect }: Props) => {
       </S.Container>
 
       <Modal ref={ref}>
-        <NewTaskForm
-          onSubmitCallback={closeModal}
-          onCancelCallback={closeModal}
-        />
+        <NewTask onSubmitCallback={closeModal} onCancelCallback={closeModal} />
       </Modal>
     </>
   );

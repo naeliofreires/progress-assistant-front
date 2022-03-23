@@ -1,5 +1,5 @@
-import { TaskType } from '/src/components/Task/types';
-import { STATUS } from '/src/components/SearchBar/types';
+import { TaskType } from '../../components/Task/types';
+import { STATUS } from '../../components/SearchBar/types';
 
 const applyFilterOptions = (
   tasks: TaskType[],
