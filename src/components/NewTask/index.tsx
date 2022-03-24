@@ -44,6 +44,7 @@ export const NewTask = ({ onSubmitCallback, onCancelCallback }: Props) => {
   const onSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+      setLoading(true);
 
       const response = await store.actions.add(task);
 
@@ -86,6 +87,7 @@ export const NewTask = ({ onSubmitCallback, onCancelCallback }: Props) => {
             placeholder="Description"
             onChange={onChange}
           />
+
           <input
             required
             type="date"
@@ -94,6 +96,7 @@ export const NewTask = ({ onSubmitCallback, onCancelCallback }: Props) => {
             placeholder="Date"
             onChange={onChange}
           />
+
           <div className="form-actions">
             <button className="save" type="submit" name="add">
               <span>add</span>

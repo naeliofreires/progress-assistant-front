@@ -4,7 +4,16 @@ import add from '/public/add-task.svg';
 import * as S from './styles';
 
 export const PlusButton = React.memo(
-  ({ amount, onClick }: { amount: number; onClick(): void }) => {
+  ({
+    amount,
+    onClick,
+  }: {
+    /**
+     * amount task
+     */
+    amount: number;
+    onClick(): void;
+  }) => {
     return (
       <S.Container>
         <div className="amount-task-view">
